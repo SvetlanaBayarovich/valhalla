@@ -102,7 +102,7 @@ struct TrafficTileHeader {
   uint64_t tile_id;
   uint64_t last_update; // seconds since epoch
   uint32_t directed_edge_count;
-  uint32_t spare1;
+  uint32_t traffic_tile_version;
   uint32_t spare2;
   uint32_t spare3;
 };
@@ -149,8 +149,11 @@ public:
   }
 
   const volatile TrafficSpeed& trafficspeed(const uint32_t directed_edge_offset) const {
-    if (header == nullptr)
+    if (header == nullptr) {
       return INVALID_SPEED;
+    } else if (header->traffic_tile_version != TRAFFIC_TILE_VERSION) {
+      return INVALID_SPEED;
+    }
     if (directed_edge_offset >= header->directed_edge_count)
       throw std::runtime_error("TrafficSpeed requested for edgeid beyond bounds of tile (offset: " +
                                std::to_string(directed_edge_offset) +

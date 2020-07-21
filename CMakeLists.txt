@@ -40,6 +40,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
+# Create a TRAFFIC_TILE_VERSION by hashing the traffic-tile header
+file(MD5 ${VALHALLA_SOURCE_DIR}/valhalla/baldr/traffictile.h traffic_tile_version)
+# Only grab 4 bytes of the sha because space, "good enough"
+string(SUBSTRING ${traffic_tile_version} 0 4 traffic_tile_version)
+add_compile_definitions(TRAFFIC_TILE_VERSION=0x${traffic_tile_version})
+
 # colorize output
 include(CheckCXXCompilerFlag)
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
